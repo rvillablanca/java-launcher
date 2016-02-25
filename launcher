@@ -25,13 +25,11 @@ def execute_and_compare(path, searched_version):
         return False
     
 def run_program(command, classpath, mainclass):
-    args = []
-    if len(sys.argv) > 1:
-        args = sys.argv[1:]
+    args = sys.argv[1:]
     if not classpath:
-        subprocess.call([command, mainclass] + args)
+        subprocess.call(["exec", command, mainclass] + args)
     else:
-        subprocess.call([command, "-cp", classpath, mainclass] + args)
+        subprocess.call(["exec", command, "-cp", classpath, mainclass] + args)
         
 
 try:
@@ -40,7 +38,6 @@ try:
     path = "java"
 
     found = execute_and_compare(path, version)
-            
     if found:
         run_program(path, classpath, mainclass)
     else:

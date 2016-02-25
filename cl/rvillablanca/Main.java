@@ -1,7 +1,7 @@
 package cl.rvillablanca;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         System.out.println("Hello from Java");
         if (args.length > 0) {
             System.out.println("Arguments length:" + args.length);
@@ -9,8 +9,5 @@ public class Main {
                 System.out.println(arg);
             }
         }
-        System.out.println("Waiting");
-        Thread.sleep(1000 * 10);
-        System.out.println("Done");
     }
 }
