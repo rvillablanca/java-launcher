@@ -25,27 +25,35 @@ def execute_and_compare(path, searched_version):
         return False
     
 def run_program(command, classpath, mainclass):
+    args = []
+    if len(sys.argv) > 1:
+        args = sys.argv[1:]
     if not classpath:
-        subprocess.call([command, mainclass])
+        subprocess.call([command, mainclass] + args)
     else:
-        subprocess.call([command, "-cp", classpath, mainclass])
+        subprocess.call([command, "-cp", classpath, mainclass] + args)
+        
 
-version = "1." + str(version)
-found = False
-path = "java"
+try:
+    version = "1." + str(version)
+    found = False
+    path = "java"
 
-found = execute_and_compare(path, version)
-	
-if found:
-    run_program(path, classpath, mainclass)
-else:
-    java_home = os.environ.get('JAVA_HOME')
-    if java_home:
-        path = java_home + "/bin/java"
-        found = execute_and_compare(path, version)
-        if found:
-            run_program(path, classpath, mainclass)
+    found = execute_and_compare(path, version)
+            
+    if found:
+        run_program(path, classpath, mainclass)
+    else:
+        java_home = os.environ.get('JAVA_HOME')
+        if java_home:
+            path = java_home + "/bin/java"
+            found = execute_and_compare(path, version)
+            if found:
+                run_program(path, classpath, mainclass)
+            else:
+                print("Cannot find java, be sure to install it (required version " + version + ")")
         else:
             print("Cannot find java, be sure to install it (required version " + version + ")")
-    else:
-        print("Cannot find java, be sure to install it (required version " + version + ")")
+except:
+    print("Exiting")
+    sys.exit(1)
