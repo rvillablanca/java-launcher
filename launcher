@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+#Set launcher configuration
+###########################
+
+version = 7
+mainclass = "cl.rvillablanca.Main"
+classpath = ""
+
+###########################
+
+import subprocess
+import sys
+import os
+
+def execute_and_compare(path, searched_version):
+    try:
+        out = subprocess.check_output([path, "-version"], stderr = subprocess.STDOUT)
+        encoding = sys.getdefaultencoding()
+        out = out.splitlines()[0].decode(encoding)
+        idx = out.index("version")
+        out = out[idx + 7:].strip().replace("\"", "")
+        return searched_version in out
+    except Exception:
+        return False
+    
+def run_program(command, classpath, mainclass):
+    if not classpath:
+        subprocess.call([command, mainclass])
+    else:
+        subprocess.call([command, "-cp", classpath, mainclass])
+
+version = "1." + str(version)
+found = False
+path = "java"
+
+found = execute_and_compare(path, version)
+	
+if found:
+    run_program(path, classpath, mainclass)
+else:
+    java_home = os.environ.get('JAVA_HOME')
+    if java_home:
+        path = java_home + "/bin/java"
+        found = execute_and_compare(path, version)
+        if found:
+            run_program(path, classpath, mainclass)
+        else:
+            print("Cannot find java, be sure to install it (required version " + version + ")")
+    else:
+        print("Cannot find java, be sure to install it (required version " + version + ")")
