@@ -6,6 +6,7 @@
 version = 7
 mainclass = "cl.rvillablanca.Main"
 classpath = ""
+java_options = ["-Xms256m", "-Xmx512m"]
 
 ###########################
 
@@ -24,33 +25,32 @@ def execute_and_compare(path, searched_version):
     except Exception:
         return False
     
-def run_program(command, classpath, mainclass):
-    args = sys.argv[1:]
-    if not classpath:
-        subprocess.call([command, mainclass] + args)
-    else:
-        subprocess.call([command, "-cp", classpath, mainclass] + args)
-        
+def run_program(command, options, classpath, mainclass):
+	args = sys.argv[1:]
+	if options:
+		command = [command] + options
+	if classpath:
+		command = command + ["-cp", classpath]
+	command.append(mainclass)
+	if args:
+		command = command + args
+	subprocess.call(command)
 
-try:
-    version = "1." + str(version)
-    found = False
-    path = "java"
+version = "1." + str(version)
+found = False
+path = "java"
 
-    found = execute_and_compare(path, version)
-    if found:
-        run_program(path, classpath, mainclass)
-    else:
-        java_home = os.environ.get('JAVA_HOME')
-        if java_home:
-            path = java_home + "/bin/java"
-            found = execute_and_compare(path, version)
-            if found:
-                run_program(path, classpath, mainclass)
-            else:
-                print("Cannot find java, be sure to install it (required version " + version + ")")
+found = execute_and_compare(path, version)
+if found:
+    run_program(path, java_options, classpath, mainclass)
+else:
+    java_home = os.environ.get('JAVA_HOME')
+    if java_home:
+        path = java_home + "/bin/java"
+        found = execute_and_compare(path, version)
+        if found:
+            run_program(path, java_options, classpath, mainclass)
         else:
             print("Cannot find java, be sure to install it (required version " + version + ")")
-except Exception as e:
-    print("Exiting", e)
-    sys.exit(1)
+    else:
+        print("Cannot find java, be sure to install it (required version " + version + ")")
