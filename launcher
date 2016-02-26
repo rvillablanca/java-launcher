@@ -27,9 +27,9 @@ def execute_and_compare(path, searched_version):
 def run_program(command, classpath, mainclass):
     args = sys.argv[1:]
     if not classpath:
-        subprocess.call(["exec", command, mainclass] + args)
+        subprocess.call([command, mainclass] + args)
     else:
-        subprocess.call(["exec", command, "-cp", classpath, mainclass] + args)
+        subprocess.call([command, "-cp", classpath, mainclass] + args)
         
 
 try:
@@ -51,6 +51,6 @@ try:
                 print("Cannot find java, be sure to install it (required version " + version + ")")
         else:
             print("Cannot find java, be sure to install it (required version " + version + ")")
-except:
-    print("Exiting")
+except Exception as e:
+    print("Exiting", e)
     sys.exit(1)
