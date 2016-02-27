@@ -46,11 +46,16 @@ if found:
 else:
     java_home = os.environ.get("JAVA_HOME")
     if java_home:
-        path = java_home + "/bin/java"
+        path = java_home + "/jre/bin/java"
         found = execute_and_compare(path, version)
         if found:
             run_program(path, javaoptions, classpath, mainclass)
         else:
-            print("Cannot find java, be sure to install it (required version " + version + ")")
+            path = java_home + "/bin/java"
+            found = execute_and_compare(path, version)
+            if found:
+                run_program(path, javaoptions, classpath, mainclass)
+            else:
+                print("Cannot find java, be sure to install it (required version " + version + ")")
     else:
         print("Cannot find java, be sure to install it (required version " + version + ")")
