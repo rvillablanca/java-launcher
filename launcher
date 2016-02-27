@@ -41,6 +41,9 @@ def run_program(command, options, classpath, mainclass):
             command = command + args
     subprocess.call(command)
     
+def msg_not_found():
+    print("Cannot find java, be sure to install it (\"" + programname + "\" require java version " + version + "+)")
+    
 try:
     version = "1." + str(version)
     found = False
@@ -62,8 +65,8 @@ try:
                 if found:
                     run_program(path, javaoptions, classpath, mainclass)
                 else:
-                    print("Cannot find java, be sure to install it (" + programname + " require java version " + version + "+)")
+                    msg_not_found()
         else:
-            print("Cannot find java, be sure to install it (" + programname + " require java version " + version + "+)")
+            msg_not_found()
 except KeyboardInterrupt:
     print("Cancelado por usuario")
