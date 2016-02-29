@@ -39,7 +39,7 @@ def run_program(command, options, classpath, mainclass):
     subprocess.call(command)
     
 def msg_not_found():
-    print("Cannot find java, be sure to install it (\"" + programname + "\" require java version " + version + "+)")
+    print("Cannot find java, be sure to install it (\"" + programname + "\" require java version 1." + str(version) + "+)")
     
 try:
     found = False
