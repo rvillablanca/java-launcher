@@ -13,3 +13,7 @@ javaoptions = ["-Xms256m", "-Xmx512m"]   #Set up Java configurations
 programname = "Launcher Example"         #Your program name
 ```
 
+**Running example**
+
+`./launcher`
+`./launcher firstArg secondArg`
