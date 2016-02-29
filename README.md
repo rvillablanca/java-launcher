@@ -2,7 +2,6 @@
 Simple Python script for launching java apps on Linux
 
 **Configuration**
-
 You need set the configuration directly on the script. For purposes of example, the default configuration is:
 
 ```
@@ -14,7 +13,6 @@ programname = "Launcher Example"         #Your program name
 ```
 
 **Running example**
-
 ```
 ./launcher
 
