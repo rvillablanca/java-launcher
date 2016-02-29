@@ -3,10 +3,6 @@
 #Set launcher configuration
 ###########################
 
-'''
-TODO: Implementar min version to max
-'''
-
 version = 7
 mainclass = "cl.rvillablanca.Main"
 classpath = ""
@@ -26,7 +22,8 @@ def execute_and_compare(path, searched_version):
         out = out.splitlines()[0].decode(encoding)
         idx = out.index("version")
         out = out[idx + 7:].strip().replace("\"", "")
-        return searched_version in out
+        out = int(out[2])
+        return out >= searched_version
     except Exception:
         return False
     
@@ -45,7 +42,6 @@ def msg_not_found():
     print("Cannot find java, be sure to install it (\"" + programname + "\" require java version " + version + "+)")
     
 try:
-    version = "1." + str(version)
     found = False
     path = "java"
 
