@@ -15,5 +15,8 @@ programname = "Launcher Example"         #Your program name
 
 **Running example**
 
-`./launcher`
-`./launcher firstArg secondArg`
+```
+./launcher
+
+./launcher firstArg secondArg
+```
