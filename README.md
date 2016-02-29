@@ -1,2 +1,2 @@
 # java-launcher
-Simple Python Script for launching java apps on Linux
+Simple Python script for launching java apps on Linux
