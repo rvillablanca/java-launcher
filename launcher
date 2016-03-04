@@ -17,7 +17,7 @@ import subprocess
 import sys
 import os
 
-def execute_and_compare(path, searched_version):
+def execute_and_check_version(path, searched_version):
     try:
         out = subprocess.check_output([path, "-version"], stderr = subprocess.STDOUT)
         encoding = sys.getdefaultencoding()
@@ -52,19 +52,19 @@ try:
     found = False
     path = "java"
 
-    found = execute_and_compare(path, version)
+    found = execute_and_check_version(path, version)
     if found:
         run_program(path, javaoptions, classpath, mainclass, isjar, jarfile)
     else:
         java_home = os.environ.get("JAVA_HOME")
         if java_home:
             path = java_home + "/jre/bin/java"
-            found = execute_and_compare(path, version)
+            found = execute_and_check_version(path, version)
             if found:
                 run_program(path, javaoptions, classpath, mainclass, isjar, jarfile)
             else:
                 path = java_home + "/bin/java"
-                found = execute_and_compare(path, version)
+                found = execute_and_check_version(path, version)
                 if found:
                     run_program(path, javaoptions, classpath, mainclass, isjar, jarfile)
                 else:
