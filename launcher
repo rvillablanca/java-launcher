@@ -38,8 +38,8 @@ def run_program(command, options, classpath, mainclass, isjar, jarfile):
     if not isjar:
         if classpath:
             command = command + ["-cp", classpath]
-        command.append(mainclass)
-        if args:
+        command.append(mainclass)    
+    if args:
             command = command + args
     subprocess.call(command)
     
