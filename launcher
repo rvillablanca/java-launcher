@@ -30,17 +30,19 @@ def execute_and_compare(path, searched_version):
         return False
     
 def run_program(command, options, classpath, mainclass, isjar, jarfile):
-    args = sys.argv[1:]
+    command = command.split()
     if options:
-        if isjar:
-            options = options + ["-jar", jarfile]
-        command = [command] + options
-    if not isjar:
+        command.extend(options)
+    if isjar:
+        command.append("-jar")
+        command.append(jarfile)
+    else:
         if classpath:
             command = command + ["-cp", classpath]
-        command.append(mainclass)    
+        command.append(mainclass)
+    args = sys.argv[1:]
     if args:
-            command = command + args
+        command = command + args
     subprocess.call(command)
     
 def msg_not_found():
