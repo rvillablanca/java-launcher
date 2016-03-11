@@ -29,6 +29,8 @@ isjar=1                                  #True if you will run a jar file
 jarfile="jar/launcher.jar"               #The jar file name if 'isjar' is True
 ```
 
+Maybe you would like rename the file like `mv launcher.py myprogram` or `mv launcher.sh myprogram` and then run it with `./myprogram` or `./myprogram firstArg secondArg`
+
 **Running example**
 
 ```
