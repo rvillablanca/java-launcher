@@ -25,7 +25,7 @@ mainclass="cl.rvillablanca.Main"         #Main class
 classpath=""                             #Class path of your application (Jars and folders)
 javaoptions=("-Xms256m" "-Xmx512m")      #Set up Java configurations
 programname="Launcher Example"           #Your program name
-isjar=1                                  #True if you will run a jar file
+isjar=1                                  #1 if you will run a jar file
 jarfile="jar/launcher.jar"               #The jar file name if 'isjar' is True
 ```
 
