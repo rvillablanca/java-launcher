@@ -41,7 +41,7 @@ run_program() {
         command="$command $mainclass"
     fi
     command="$command $args"
-    $command
+    exec $command
 }
 
 msg_not_found() {
