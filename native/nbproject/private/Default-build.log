@@ -1,0 +1,38 @@
+rm -f cdiff
+gcc -Wall cdiff.c -o cdiff
+cdiff.c:8:8: error: unknown type name ‘props’
+ static props* read_props();
+        ^
+cdiff.c:9:24: error: unknown type name ‘props’
+ static void free_props(props* props);
+                        ^
+cdiff.c:55:15: error: conflicting types for ‘read_props’
+ static props* read_props() {
+               ^
+cdiff.c:8:15: note: previous declaration of ‘read_props’ was here
+ static props* read_props();
+               ^
+cdiff.c: In function ‘read_props’:
+cdiff.c:56:25: warning: implicit declaration of function ‘malloc’ [-Wimplicit-function-declaration]
+     props* p = (props*) malloc(sizeof(props));
+                         ^
+cdiff.c:56:25: warning: incompatible implicit declaration of built-in function ‘malloc’
+cdiff.c:56:25: note: include ‘<stdlib.h>’ or provide a declaration of ‘malloc’
+cdiff.c: In function ‘free_props’:
+cdiff.c:61:5: warning: implicit declaration of function ‘free’ [-Wimplicit-function-declaration]
+     free(p->main_class);
+     ^
+cdiff.c:61:5: warning: incompatible implicit declaration of built-in function ‘free’
+cdiff.c:61:5: note: include ‘<stdlib.h>’ or provide a declaration of ‘free’
+cdiff.c: At top level:
+cdiff.c:65:13: warning: ‘run_program’ defined but not used [-Wunused-function]
+ static void run_program(char* command, char *args[]) {
+             ^
+cdiff.c:55:15: warning: ‘read_props’ defined but not used [-Wunused-function]
+ static props* read_props() {
+               ^
+cdiff.c:60:13: warning: ‘free_props’ defined but not used [-Wunused-function]
+ static void free_props(props* p) {
+             ^
+Makefile:4: recipe for target 'install' failed
+make: *** [install] Error 1

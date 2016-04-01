@@ -1,12 +1,32 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <errno.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+struct s_props {
+    int version;
+    char* main_class;
+    char* class_path;
+    char* java_opts;
+    char* program_name;
+    int is_jar;
+    char* jar_file;
+};
+
+typedef struct s_props props;
 
 static int check_version(char* command);
+static void run_program(char* command, char *args[]);
+static props* read_props();
+static void free_props(props* props);
 
 int main(int argc, char *argv[]) {
-    check_version("java");
+    read_props();
+    int check = check_version("java");
+    if (check == 1) {
+        printf("Java encontrado\n");
+    }
     return 0;
 }
 
@@ -32,4 +52,39 @@ static int check_version(char* command) {
         perror("Error al ejecutar comando");
         return 0;
     }
+}
+
+static props* read_props() {
+    props* p = (props*) malloc(sizeof (props));
+    FILE* file = fopen("cdiff.cfg", "r");
+    if (file != NULL) {
+        puts("Leyendo archivo cdiff.cfg");
+        fseek(file, 0L, SEEK_END);
+        long size = ftell(file);
+        fseek(file, 0L, SEEK_SET);
+        printf("Tamaño: %ld bytes\n", size);
+//        size += 1;
+        char content[size];
+        memset(content, 0, size);
+        fread(content, size, 1, file);
+        fclose(file);
+        printf("Contenido: [%s][%ld][%zd]\n", content, sizeof (content), strlen(content));
+    } else {
+        perror("No se pudo abrir el archivo de propiedades");
+        exit(-1);
+    }
+    return p;
+}
+
+static void free_props(props* p) {
+    free(p->main_class);
+    free(p->class_path);
+    free(p->java_opts);
+    free(p->program_name);
+    free(p->jar_file);
+    free(p);
+}
+
+static void run_program(char* command, char *args[]) {
+
 }

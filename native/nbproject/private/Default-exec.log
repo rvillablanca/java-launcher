@@ -1,0 +1,8 @@
+called: gcc
+	/home/rodrigo/desarrollo/personal/java-launcher/native
+	gcc
+	-Wall
+	cdiff.c
+	-o
+	cdiff
+
