@@ -50,7 +50,7 @@ static int check_version(char* command) {
         return 1;
     } else {
         perror("Error al ejecutar comando");
-        return 0;
+        exit(-1);
     }
 }
 
@@ -63,7 +63,7 @@ static props* read_props() {
         long size = ftell(file);
         fseek(file, 0L, SEEK_SET);
         printf("Tamaño: %ld bytes\n", size);
-//        size += 1;
+        //        size += 1;
         char content[size];
         memset(content, 0, size);
         fread(content, size, 1, file);
