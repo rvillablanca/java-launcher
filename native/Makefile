@@ -1,4 +1,4 @@
-all: clean install
+all: install
 
 install:
 	gcc -Wall cdiff.c -o cdiff
