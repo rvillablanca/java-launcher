@@ -20,13 +20,15 @@ static int check_version(char* command);
 static void run_program(char* command, char *args[]);
 static props* read_props();
 static void free_props(props* props);
+static long file_size(FILE* file);
 
 int main(int argc, char *argv[]) {
-    read_props();
+    props * p = read_props();
     int check = check_version("java");
     if (check == 1) {
         printf("Java encontrado\n");
     }
+    free_props(p);
     return 0;
 }
 
@@ -54,14 +56,20 @@ static int check_version(char* command) {
     }
 }
 
+static long file_size(FILE* file) {
+    fseek(file, 0L, SEEK_END);
+    long size = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+    return size;
+}
+
 static props* read_props() {
     props* p = (props*) malloc(sizeof (props));
     FILE* file = fopen("cdiff.cfg", "r");
     if (file != NULL) {
         puts("Leyendo archivo cdiff.cfg");
-        fseek(file, 0L, SEEK_END);
-        long size = ftell(file);
-        fseek(file, 0L, SEEK_SET);
+        long size = file_size(file);
+        size += 1;
         printf("Tamaño: %ld bytes\n", size);
         //        size += 1;
         char content[size];
@@ -77,11 +85,11 @@ static props* read_props() {
 }
 
 static void free_props(props* p) {
-    free(p->main_class);
-    free(p->class_path);
-    free(p->java_opts);
-    free(p->program_name);
-    free(p->jar_file);
+    //    free(p->main_class);
+    //    free(p->class_path);
+    //    free(p->java_opts);
+    //    free(p->program_name);
+    //    free(p->jar_file);
     free(p);
 }
 
