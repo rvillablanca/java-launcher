@@ -3,6 +3,8 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <inttypes.h>
+#include <ctype.h>
 
 struct s_props {
     int version;
@@ -20,13 +22,15 @@ static int check_version(char* command);
 static void run_program(char* command, char *args[]);
 static props* read_props();
 static void free_props(props* props);
-static long file_size(FILE* file);
 
-int main(int argc, char *argv[]) {
+char *strstrip(char *s);
+char* get_str_value(FILE* file, char* property);
+
+int main(int argc, char* argv[]) {
     props * p = read_props();
     int check = check_version("java");
     if (check == 1) {
-        printf("Java encontrado\n");
+        //        printf("Java encontrado\n");
     }
     free_props(p);
     return 0;
@@ -37,14 +41,14 @@ static int check_version(char* command) {
     char* version_command = " -version 2>&1";
     memset(full_command, 0, 150);
     sprintf(full_command, "%s %s", command, version_command);
-    printf("Comando a ejecutar: %s\n", full_command);
+    //    printf("Comando a ejecutar: %s\n", full_command);
     char output[1024];
     FILE* fp;
     fp = popen(full_command, "r");
     if (fp != NULL) {
-        puts("Comando ejecutado");
+        //        puts("Comando ejecutado");
         if (fgets(output, sizeof (output), fp) != NULL) {
-            printf("Salida: %s", output);
+            //            printf("Salida: %s", output);
         } else {
             puts("No se pudo obtener la salida del comando\n");
         }
@@ -52,36 +56,74 @@ static int check_version(char* command) {
         return 1;
     } else {
         perror("Error al ejecutar comando");
-        exit(-1);
+        return 0;
     }
-}
-
-static long file_size(FILE* file) {
-    fseek(file, 0L, SEEK_END);
-    long size = ftell(file);
-    fseek(file, 0L, SEEK_SET);
-    return size;
 }
 
 static props* read_props() {
     props* p = (props*) malloc(sizeof (props));
-    FILE* file = fopen("cdiff.cfg", "r");
+    FILE* file = fopen("cdiff_test.cfg", "r");
     if (file != NULL) {
-        puts("Leyendo archivo cdiff.cfg");
-        long size = file_size(file);
-        size += 1;
-        printf("Tamaño: %ld bytes\n", size);
-        //        size += 1;
-        char content[size];
-        memset(content, 0, size);
-        fread(content, size, 1, file);
+        char* version = get_str_value(file, "version");
+        char* main_class = get_str_value(file, "main_class");
+        char* class_path = get_str_value(file, "class_path");
+        char* java_opts = get_str_value(file, "java_opts");
+        char* program_name = get_str_value(file, "program_name");
+        char* is_jar = get_str_value(file, "is_jar");
+        char* jar_file = get_str_value(file, "jar_file");
         fclose(file);
-        printf("Contenido: [%s][%ld][%zd]\n", content, sizeof (content), strlen(content));
     } else {
         perror("No se pudo abrir el archivo de propiedades");
         exit(-1);
     }
     return p;
+}
+
+char* get_str_value(FILE* file, char* property) {
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    char* value = NULL;
+    while ((read = getline(&line, &len, file)) != -1) {
+        if (strstr(line, property) != NULL) {
+            char* rest = strchr(line, ' ');
+            if (rest != NULL) {
+                printf("[%s]", line);
+                int index = rest - line;
+                char* opt = line + index + 1;
+                opt = strstrip(opt);
+                printf("[%s][%zu]", opt, strlen(opt));
+                int size = strlen(opt) + 1;
+                value = (char*) malloc(sizeof (char) * size);
+                strcpy(value, opt);
+            }
+        }
+    }
+    free(line);
+    return value;
+}
+
+char *strstrip(char* s) {
+    size_t size;
+    char *end;
+
+    size = strlen(s);
+
+    if (!size) {
+        return s;
+    }
+
+    end = s + size - 1;
+    while (end >= s && isspace(*end)) {
+        end--;
+    }
+    *(end + 1) = '\0';
+
+    while (*s && isspace(*s)) {
+        s++;
+    }
+
+    return s;
 }
 
 static void free_props(props* p) {
