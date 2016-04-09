@@ -88,14 +88,14 @@ char* get_str_value(FILE* file, char* property) {
         if (strstr(line, property) != NULL) {
             char* rest = strchr(line, ' ');
             if (rest != NULL) {
-                printf("[%s]", line);
                 int index = rest - line;
                 char* opt = line + index + 1;
                 opt = strstrip(opt);
-                printf("[%s][%zu]", opt, strlen(opt));
+                printf("[%s][%zu]\n", opt, strlen(opt));
                 int size = strlen(opt) + 1;
                 value = (char*) malloc(sizeof (char) * size);
                 strcpy(value, opt);
+                break;
             }
         }
     }
