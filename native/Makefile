@@ -1,7 +1,7 @@
 all: install
 
 install:
-	gcc -Wall cdiff.c -o cdiff
+	gcc -Wall *.c -o nativelauncher
 
 clean:
 	rm -f cdiff

@@ -115,7 +115,7 @@ static int check_props(props * p) {
 
 char* get_str_value(char* property) {
     char* value = NULL;
-    FILE* file = fopen("cdiff.cfg", "r");
+    FILE* file = fopen("nativeconf.conf", "r");
     if (file != NULL) {
         char* line = NULL;
         size_t len = 0;
@@ -133,7 +133,7 @@ char* get_str_value(char* property) {
                     if (size > 1) {
                         value = (char*) malloc(sizeof (char) * size);
                         strcpy(value, opt);
-                        printf("Value %s: [%s][%zu]\n", property, value, strlen(value));
+                        printf("%s: [%s][%zu]\n", property, value, strlen(value));
                         break;
                     }
                 }
