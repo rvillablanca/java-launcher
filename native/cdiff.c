@@ -32,26 +32,17 @@ static void free_props(props* p);
 static int check_props(props* p);
 
 //Utility
-static char *strstrip(char *s);
-static char* get_str_value(FILE* file, char* property);
+static char* strstrip(char *s);
+static char* get_str_value(char* property);
 static void error(char* error);
 static void p_error(char* error);
 static void safe_free(char* prop);
 
 int main(int argc, char* argv[]) {
     props * p = read_props();
-    if (!p) {
-        error("Cannot create props");
-        exit(-1);
-    }
-    int valid = check_props(p);
-    if (!valid) {
-        error("Configuration file is not valid, check all options values");
-        exit(-1);
-    }
-    valid = check_version("java");
+    int valid = check_version("java");
     if (valid == 1) {
-        //        printf("Java encontrado\n");
+        printf("Java encontrado\n");
     }
     free_props(p);
     return 0;
@@ -79,27 +70,26 @@ static int check_version(char* command) {
 }
 
 static props* read_props() {
-    props* p = NULL;
-    FILE* file = fopen("cdiff_test.cfg", "r");
-    if (file != NULL) {
-        p = (props*) malloc(sizeof (props));
-        char* version = get_str_value(file, "version");
-        char* is_jar = get_str_value(file, "is_jar");
-        p->_main_class = get_str_value(file, "main_class");
-        p->_class_path = get_str_value(file, "class_path");
-        p->_java_opts = get_str_value(file, "java_opts");
-        p->program_name = get_str_value(file, "program_name");
-        p->_jar_file = get_str_value(file, "jar_file");
-        p->version = version != NULL ? atoi(version) : 0;
-        p->is_jar = is_jar != NULL ? atoi(is_jar) : 0;
-        fclose(file);
-    } else {
-        p_error("Cannot open properties file");
+    props* p = (props*) malloc(sizeof (props));
+    char* version = get_str_value("version");
+    char* is_jar = get_str_value("is_jar");
+    p->_main_class = get_str_value("main_class");
+    p->_class_path = get_str_value("class_path");
+    p->_java_opts = get_str_value("java_opts");
+    p->program_name = get_str_value("program_name");
+    p->_jar_file = get_str_value("jar_file");
+    p->version = version != NULL ? atoi(version) : 0;
+    p->is_jar = is_jar != NULL ? atoi(is_jar) : 0;
+    int valid = check_props(p);
+    if (!valid) {
+        error("Configuration file is not valid, check all options values");
+        free_props(p);
+        exit(-1);
     }
     return p;
 }
 
-static int check_props(props* p) {
+static int check_props(props * p) {
     if (p->version == 0) {
         error("version option must be set");
         return 0;
@@ -123,27 +113,37 @@ static int check_props(props* p) {
     return 1;
 }
 
-char* get_str_value(FILE* file, char* property) {
-    char* line = NULL;
-    size_t len = 0;
-    ssize_t read;
+char* get_str_value(char* property) {
     char* value = NULL;
-    while ((read = getline(&line, &len, file)) != -1) {
-        if (strstr(line, property) != NULL) {
-            char* rest = strchr(line, ' ');
-            if (rest != NULL) {
-                int index = rest - line;
-                char* opt = line + index + 1;
-                opt = strstrip(opt);
-                printf("[%s][%zu]\n", opt, strlen(opt));
-                int size = strlen(opt) + 1;
-                value = (char*) malloc(sizeof (char) * size);
-                strcpy(value, opt);
-                break;
+    FILE* file = fopen("cdiff.cfg", "r");
+    if (file != NULL) {
+        char* line = NULL;
+        size_t len = 0;
+        ssize_t read;
+        while ((read = getline(&line, &len, file)) != -1) {
+            char aux[read + 1];
+            strcpy(aux, line);
+            if (strstr(aux, property) != NULL) {
+                char* rest = strchr(aux, ' ');
+                if (rest != NULL) {
+                    int index = rest - aux;
+                    char* opt = aux + index + 1;
+                    opt = strstrip(opt);
+                    int size = strlen(opt) + 1;
+                    if (size > 1) {
+                        value = (char*) malloc(sizeof (char) * size);
+                        strcpy(value, opt);
+                        printf("Value %s: [%s][%zu]\n", property, value, strlen(value));
+                        break;
+                    }
+                }
             }
         }
+        free(line);
+        fclose(file);
+    } else {
+        p_error("Cannot open properties file");
     }
-    free(line);
     return value;
 }
 
@@ -170,7 +170,8 @@ char* strstrip(char* s) {
     return s;
 }
 
-static void free_props(props* p) {
+static void free_props(props * p) {
+    puts("Liberando props");
     safe_free(p->_main_class);
     safe_free(p->_class_path);
     safe_free(p->_class_path);
@@ -181,6 +182,7 @@ static void free_props(props* p) {
 
 static void safe_free(char* prop) {
     if (prop) {
+        printf("Liberando: %s\n", prop);
         free(prop);
     }
 }
@@ -190,7 +192,7 @@ static void run_program(char* command, char *args[]) {
 }
 
 static void error(char* error) {
-    fprintf(stderr, "%s", error);
+    fprintf(stderr, "%s\n", error);
 }
 
 static void p_error(char* error) {
