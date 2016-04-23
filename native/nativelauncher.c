@@ -80,6 +80,8 @@ static props* read_props() {
     p->_jar_file = get_str_value("jar_file");
     p->version = version != NULL ? atoi(version) : 0;
     p->is_jar = is_jar != NULL ? atoi(is_jar) : 0;
+    safe_free(version);
+    safe_free(is_jar);
     int valid = check_props(p);
     if (!valid) {
         error("Configuration file is not valid, check all options values");
@@ -176,6 +178,7 @@ static void free_props(props * p) {
     safe_free(p->_class_path);
     safe_free(p->_class_path);
     safe_free(p->_java_opts);
+    safe_free(p->_jar_file);
     safe_free(p->program_name);
     free(p);
 }
