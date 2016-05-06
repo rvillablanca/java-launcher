@@ -52,12 +52,13 @@ static int check_version(char* command) {
     char full_command[150];
     char* version_command = " -version 2>&1";
     memset(full_command, 0, 150);
-    sprintf(full_command, "%s %s", command, version_command);
+    snprintf(full_command, 150, "%s %s", command, version_command);
     char output[1024];
     FILE* fp;
     fp = popen(full_command, "r");
     if (fp != NULL) {
         if (fgets(output, sizeof (output), fp) != NULL) {
+            printf("Salida: %s\n", output);
         } else {
             puts("Cannot get output command\n");
         }
@@ -124,7 +125,7 @@ char* get_str_value(char* property) {
         ssize_t read;
         while ((read = getline(&line, &len, file)) != -1) {
             char aux[read + 1];
-            strcpy(aux, line);
+            memcpy(aux, line, read + 1);
             if (strstr(aux, property) != NULL) {
                 char* rest = strchr(aux, ' ');
                 if (rest != NULL) {
@@ -134,7 +135,7 @@ char* get_str_value(char* property) {
                     int size = strlen(opt) + 1;
                     if (size > 1) {
                         value = (char*) malloc(sizeof (char) * size);
-                        strcpy(value, opt);
+                        memcpy(value, opt, size);
                         printf("%s: [%s][%zu]\n", property, value, strlen(value));
                         break;
                     }
