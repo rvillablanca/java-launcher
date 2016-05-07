@@ -58,7 +58,7 @@ static int check_version(char* command) {
     fp = popen(full_command, "r");
     if (fp != NULL) {
         if (fgets(output, sizeof (output), fp) != NULL) {
-            printf("Salida: %s\n", output);
+            printf("Salida: [%s]\n", output);
         } else {
             puts("Cannot get output command\n");
         }
@@ -127,11 +127,11 @@ char* get_str_value(char* property) {
             char aux[read + 1];
             memcpy(aux, line, read + 1);
             if (strstr(aux, property) != NULL) {
-//                aux = strstrip(aux);
-                char* rest = strchr(aux, ' ');
+                char* aux_2 = strstrip(aux);
+                char* rest = strchr(aux_2, ' ');
                 if (rest != NULL) {
-                    int index = rest - aux;
-                    char* opt = aux + index + 1;
+                    int index = rest - aux_2;
+                    char* opt = aux_2 + index + 1;
                     opt = strstrip(opt);
                     int size = strlen(opt) + 1;
                     if (size > 1) {
