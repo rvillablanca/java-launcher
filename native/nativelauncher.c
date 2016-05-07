@@ -127,6 +127,7 @@ char* get_str_value(char* property) {
             char aux[read + 1];
             memcpy(aux, line, read + 1);
             if (strstr(aux, property) != NULL) {
+                aux = strstrip(aux);
                 char* rest = strchr(aux, ' ');
                 if (rest != NULL) {
                     int index = rest - aux;
