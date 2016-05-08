@@ -175,7 +175,6 @@ char* strstrip(char* s) {
 }
 
 static void free_props(props * p) {
-    puts("Liberando props");
     safe_free(p->_main_class);
     safe_free(p->_class_path);
     safe_free(p->_class_path);
@@ -187,7 +186,6 @@ static void free_props(props * p) {
 
 static void safe_free(char* prop) {
     if (prop) {
-        printf("Liberando: %s\n", prop);
         free(prop);
     }
 }
