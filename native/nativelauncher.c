@@ -209,6 +209,7 @@ static void free_props(props * p) {
     safe_free(p->_java_opts);
     safe_free(p->_jar_file);
     safe_free(p->program_name);
+    safe_free(p->is_jar);
     free(p);
 }
 
