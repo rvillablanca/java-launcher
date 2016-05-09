@@ -42,7 +42,22 @@ int main(int argc, char* argv[]) {
     props * p = read_props();
     int valid = check_version("java", p->version);
     if (valid == 1) {
-        printf("Java correcto\n");
+        run_program(NULL, NULL);
+    } else {
+        char* java_home = getenv("JAVA_HOME");
+        if (java_home != NULL) {
+            char command[1001];
+            char* suffix = "bin/java";
+            memset(command, 0, 1001);
+            snprintf(command, 1000, "%s%s", java_home, suffix);
+            valid = check_version(command, p->version);
+            if (valid == 1) {
+                run_program(NULL, NULL);
+            }
+        } else {
+            printf("Java Home null\n");
+        }
+
     }
     free_props(p);
     return 0;
@@ -66,6 +81,7 @@ static int check_version(char* command, int required) {
                 replace_char(p, '"', ' ');
                 p = strstrip(p);
                 int v = atoi(p + 2);
+                printf("Version encontrada: %d\n", v);
                 result = v >= required;
             } else {
                 puts("Version not found");
@@ -204,7 +220,7 @@ static void safe_free(char* prop) {
 }
 
 static void run_program(char* command, char *args[]) {
-
+    printf("Ejecutando Java :)\n");
 }
 
 static void error(char* error) {
