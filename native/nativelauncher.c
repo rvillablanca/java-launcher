@@ -9,7 +9,7 @@
 struct s_props {
     //    Required
     int version;
-    int is_jar;
+    char* is_jar;
     char* program_name;
 
     //    Maybe required
@@ -108,16 +108,15 @@ static void replace_char(char* source, char old, char new) {
 static props* read_props() {
     props* p = (props*) malloc(sizeof (props));
     char* version = get_str_value("version");
-    char* is_jar = get_str_value("is_jar");
     p->_main_class = get_str_value("main_class");
     p->_class_path = get_str_value("class_path");
     p->_java_opts = get_str_value("java_opts");
     p->program_name = get_str_value("program_name");
     p->_jar_file = get_str_value("jar_file");
+    p->is_jar = get_str_value("is_jar");
     p->version = version != NULL ? atoi(version) : 0;
-    p->is_jar = is_jar != NULL ? atoi(is_jar) : 0;
+
     safe_free(version);
-    safe_free(is_jar);
     int valid = check_props(p);
     if (!valid) {
         error("Configuration file is not valid, check all options values");
@@ -128,15 +127,15 @@ static props* read_props() {
 }
 
 static int check_props(props * p) {
-    if (p->version == 0) {
+    if (!p->version) {
         error("version option must be set");
         return 0;
     }
-    if (p->is_jar == 0) {
+    if (!p->is_jar) {
         error("is_jar option must be set");
         return 0;
     }
-    if (p->is_jar) {
+    if (strcmp(p->is_jar, "true") == 0) {
         if (!p->_jar_file) {
             error("jar_file option must be set");
             return 0;
