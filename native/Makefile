@@ -1,7 +1,7 @@
 all: install
 
 install:
-	gcc -Wall *.c -o nativelauncher
+	gcc -Wall -g *.c -o nativelauncher
 
 clean:
 	rm -f nativelauncher

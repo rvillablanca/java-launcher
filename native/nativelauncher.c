@@ -25,7 +25,7 @@ struct s_props {
 typedef struct s_props props;
 
 //Logic functions
-static int check_version(char* command);
+static int check_version(char* command, int required);
 static void run_program(char* command, char *args[]);
 static props* read_props();
 static void free_props(props* p);
@@ -35,38 +35,57 @@ static int check_props(props* p);
 static char* strstrip(char *s);
 static char* get_str_value(char* property);
 static void error(char* error);
-static void p_error(char* error);
 static void safe_free(char* prop);
+static void replace_char(char* source, char old, char new);
 
 int main(int argc, char* argv[]) {
     props * p = read_props();
-    int valid = check_version("java");
+    int valid = check_version("java", p->version);
     if (valid == 1) {
-        printf("Java encontrado\n");
+        printf("Java correcto\n");
     }
     free_props(p);
     return 0;
 }
 
-static int check_version(char* command) {
-    char full_command[150];
+static int check_version(char* command, int required) {
+    int result = 0;
+    char full_command[151];
     char* version_command = " -version 2>&1";
-    memset(full_command, 0, 150);
+    memset(full_command, 0, 151);
     snprintf(full_command, 150, "%s %s", command, version_command);
     char output[1024];
     FILE* fp;
     fp = popen(full_command, "r");
     if (fp != NULL) {
         if (fgets(output, sizeof (output), fp) != NULL) {
-            printf("Salida: [%s]\n", output);
+            char* version = "version";
+            char* p = strstr(output, version);
+            if (p != NULL) {
+                p = p + 7;
+                replace_char(p, '"', ' ');
+                p = strstrip(p);
+                int v = atoi(p + 2);
+                result = v >= required;
+            } else {
+                puts("Version not found");
+            }
         } else {
             puts("Cannot get output command\n");
         }
         pclose(fp);
-        return 1;
     } else {
         perror("Error while executing command");
-        return 0;
+    }
+    return result;
+}
+
+static void replace_char(char* source, char old, char new) {
+    int max = strlen(source);
+    for (int i = 0; i < max; i++) {
+        if (source[i] == old) {
+            source[i] = new;
+        }
     }
 }
 
@@ -137,7 +156,6 @@ char* get_str_value(char* property) {
                     if (size > 1) {
                         value = (char*) malloc(sizeof (char) * size);
                         memcpy(value, opt, size);
-                        printf("%s: [%s][%zu]\n", property, value, strlen(value));
                         break;
                     }
                 }
@@ -146,7 +164,7 @@ char* get_str_value(char* property) {
         free(line);
         fclose(file);
     } else {
-        p_error("Cannot open properties file");
+        perror("Cannot open properties file");
     }
     return value;
 }
@@ -154,23 +172,18 @@ char* get_str_value(char* property) {
 char* strstrip(char* s) {
     size_t size;
     char* end;
-
     size = strlen(s);
-
     if (!size) {
         return s;
     }
-
     end = s + size - 1;
     while (end >= s && isspace(*end)) {
         end--;
     }
     *(end + 1) = '\0';
-
     while (*s && isspace(*s)) {
         s++;
     }
-
     return s;
 }
 
@@ -196,8 +209,4 @@ static void run_program(char* command, char *args[]) {
 
 static void error(char* error) {
     fprintf(stderr, "%s\n", error);
-}
-
-static void p_error(char* error) {
-    perror(error);
 }
