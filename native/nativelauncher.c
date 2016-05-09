@@ -152,7 +152,7 @@ static int check_props(props * p) {
 
 char* get_str_value(char* property) {
     char* value = NULL;
-    FILE* file = fopen("nativeconf.conf", "r");
+    FILE* file = fopen("launcher.conf", "r");
     if (file != NULL) {
         char* line = NULL;
         size_t len = 0;
