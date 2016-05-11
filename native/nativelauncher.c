@@ -252,10 +252,9 @@ static void run_program(char* command, props p) {
             val = sprintf(aux, "-cp %s ", p._class_path);
             aux += val;
         }
-        val = sprintf(aux, "%s", p._main_class);
-        aux += val;
+        sprintf(aux, "%s", p._main_class);
     }
-    printf("[%s]\n", buffer);
+    printf("[%lu][%zu][%s]\n", sizeof (buffer), strlen(buffer), buffer);
 }
 
 static void error(char* error) {
