@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     props * p = read_props();
     int valid = check_version("java", p->version);
     if (valid == 1) {
-        run_program("", *p);
+        run_program("java", *p);
     } else {
         char* java_home = getenv("JAVA_HOME");
         if (java_home != NULL) {
@@ -50,9 +50,10 @@ int main(int argc, char* argv[]) {
             char* suffix = "bin/java";
             memset(command, 0, 1001);
             snprintf(command, 1000, "%s%s", java_home, suffix);
+            printf("%s\n", command);
             valid = check_version(command, p->version);
             if (valid == 1) {
-                //                run_program("", *p);
+                run_program(command, *p);
             }
         } else {
             printf("Java Home null\n");
@@ -236,8 +237,24 @@ static void run_program(char* command, props p) {
     len = len + 1024;
     char buffer[len];
     memset(buffer, 0, len);
-    int current_size = strlen(command);
-    int val = snprintf(buffer, current_size, "%s", command);
+    char* aux = buffer;
+    int val = sprintf(aux, "%s ", command);
+    aux += val;
+    if (p._java_opts) {
+        val = sprintf(aux, "%s ", p._java_opts);
+        aux += val;
+    }
+    if (strcmp(p.is_jar, "true") == 0) {
+        val = sprintf(aux, "-jar %s ", p._jar_file);
+        aux += val;
+    } else {
+        if (p._class_path) {
+            val = sprintf(aux, "-cp %s ", p._class_path);
+            aux += val;
+        }
+        val = sprintf(aux, "%s ", p._main_class);
+        aux += val;
+    }
     printf("[%s]\n", buffer);
 }
 
