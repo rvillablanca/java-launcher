@@ -26,7 +26,7 @@ typedef struct s_props props;
 
 //Logic functions
 static int check_version(char* command, int required);
-static void run_program(char* command, char *args[]);
+static void run_program(char* command, props p);
 static props* read_props();
 static void free_props(props* p);
 static int check_props(props* p);
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     props * p = read_props();
     int valid = check_version("java", p->version);
     if (valid == 1) {
-        run_program(NULL, NULL);
+        run_program("", *p);
     } else {
         char* java_home = getenv("JAVA_HOME");
         if (java_home != NULL) {
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
             snprintf(command, 1000, "%s%s", java_home, suffix);
             valid = check_version(command, p->version);
             if (valid == 1) {
-                run_program(NULL, NULL);
+                //                run_program("", *p);
             }
         } else {
             printf("Java Home null\n");
@@ -81,7 +81,6 @@ static int check_version(char* command, int required) {
                 replace_char(p, '"', ' ');
                 p = strstrip(p);
                 int v = atoi(p + 2);
-                printf("Version encontrada: %d\n", v);
                 result = v >= required;
             } else {
                 puts("Version not found");
@@ -205,7 +204,6 @@ char* strstrip(char* s) {
 static void free_props(props * p) {
     safe_free(p->_main_class);
     safe_free(p->_class_path);
-    safe_free(p->_class_path);
     safe_free(p->_java_opts);
     safe_free(p->_jar_file);
     safe_free(p->program_name);
@@ -219,8 +217,28 @@ static void safe_free(char* prop) {
     }
 }
 
-static void run_program(char* command, char *args[]) {
-    printf("Ejecutando Java :)\n");
+static void run_program(char* command, props p) {
+    size_t len = strlen(command);
+    if (p._class_path) {
+        len += strlen(p._class_path);
+    }
+    if (p._jar_file) {
+        len += strlen(p._jar_file);
+    }
+    if (p._main_class) {
+        len += strlen(p._main_class);
+    }
+    if (p._java_opts) {
+        len += strlen(p._java_opts);
+    }
+
+    len += strlen(p.program_name);
+    len = len + 1024;
+    char buffer[len];
+    memset(buffer, 0, len);
+    int current_size = strlen(command);
+    int val = snprintf(buffer, current_size, "%s", command);
+    printf("[%s]\n", buffer);
 }
 
 static void error(char* error) {
