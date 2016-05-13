@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
         free(arguments);
     }
     free_props(p);
+    puts("Terminado");
     return 0;
 }
 
@@ -281,7 +282,6 @@ static void run_program(char* command, props p, char* arguments) {
             aux += val;
         }
     }
-    sprintf(aux, "%s", "&");
     system(buffer);
 }
 
