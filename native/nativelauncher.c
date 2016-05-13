@@ -30,6 +30,7 @@ static void run_program(char* command, props p, char* args);
 static props* read_props();
 static void free_props(props* p);
 static int check_props(props* p);
+static void print_msg(props p);
 
 //Utility
 static char* strstrip(char *s);
@@ -42,7 +43,6 @@ int main(int argc, char* argv[]) {
     int len = 0;
     if (argc > 1) {
         for (int i = 1; i < argc; i++) {
-            printf("%s\n", argv[i]);
             len += strlen(argv[i]) + 1;
         }
         len++;
@@ -70,17 +70,22 @@ int main(int argc, char* argv[]) {
             valid = check_version(command, p->version);
             if (valid == 1) {
                 run_program(command, *p, arguments);
+            } else {
+                print_msg(*p);
             }
         } else {
-            printf("Java Home null\n");
+            print_msg(*p);
         }
-
     }
     if (arguments) {
         free(arguments);
     }
     free_props(p);
     return 0;
+}
+
+static void print_msg(props p) {
+    printf("Cannot find java, be sure to install it (\"%s\" require java version 1.%d+)\n", p.program_name, p.version);
 }
 
 static int check_version(char* command, int required) {
