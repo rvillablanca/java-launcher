@@ -26,7 +26,7 @@ typedef struct s_props props;
 
 //Logic functions
 static int check_version(char* command, int required);
-static void run_program(char* command, props p);
+static void run_program(char* command, props p, char* args);
 static props* read_props();
 static void free_props(props* p);
 static int check_props(props* p);
@@ -39,10 +39,26 @@ static void safe_free(char* prop);
 static void replace_char(char* source, char old, char new);
 
 int main(int argc, char* argv[]) {
+    int len = 0;
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) {
+            printf("%s\n", argv[i]);
+            len += strlen(argv[i]) + 1;
+        }
+        len++;
+
+    }
+    char* arguments = len > 1 ? (char*) malloc(sizeof (char) * len) : (char*) NULL;
+    if (arguments) {
+        char* aux = arguments;
+        for (int i = 1; i < argc; i++) {
+            aux += sprintf(aux, "%s ", argv[i]);
+        }
+    }
     props * p = read_props();
     int valid = check_version("java", p->version);
     if (valid == 1) {
-        run_program("java", *p);
+        run_program("java", *p, arguments);
     } else {
         char* java_home = getenv("JAVA_HOME");
         if (java_home != NULL) {
@@ -53,12 +69,15 @@ int main(int argc, char* argv[]) {
             printf("%s\n", command);
             valid = check_version(command, p->version);
             if (valid == 1) {
-                run_program(command, *p);
+                run_program(command, *p, arguments);
             }
         } else {
             printf("Java Home null\n");
         }
 
+    }
+    if (arguments) {
+        free(arguments);
     }
     free_props(p);
     return 0;
@@ -218,7 +237,7 @@ static void safe_free(char* prop) {
     }
 }
 
-static void run_program(char* command, props p) {
+static void run_program(char* command, props p, char* arguments) {
     size_t len = strlen(command);
     if (p._class_path) {
         len += strlen(p._class_path);
@@ -231,6 +250,9 @@ static void run_program(char* command, props p) {
     }
     if (p._java_opts) {
         len += strlen(p._java_opts);
+    }
+    if (arguments) {
+        len += strlen(arguments);
     }
 
     len += strlen(p.program_name);
@@ -252,9 +274,15 @@ static void run_program(char* command, props p) {
             val = sprintf(aux, "-cp %s ", p._class_path);
             aux += val;
         }
-        sprintf(aux, "%s", p._main_class);
+        val = sprintf(aux, "%s ", p._main_class);
+        aux += val;
+        if (arguments) {
+            val = sprintf(aux, "%s", arguments);
+            aux += val;
+        }
     }
-    printf("[%lu][%zu][%s]\n", sizeof (buffer), strlen(buffer), buffer);
+    sprintf(aux, "%s", "&");
+    system(buffer);
 }
 
 static void error(char* error) {
