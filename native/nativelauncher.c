@@ -80,7 +80,6 @@ int main(int argc, char* argv[]) {
         free(arguments);
     }
     free_props(p);
-    puts("Terminado");
     return 0;
 }
 
