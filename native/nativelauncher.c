@@ -281,10 +281,10 @@ static void run_program(char* command, props p, char* arguments) {
         }
         val = sprintf(aux, "%s ", p._main_class);
         aux += val;
-        if (arguments) {
-            val = sprintf(aux, "%s", arguments);
-            aux += val;
-        }
+    }
+    if (arguments) {
+        val = sprintf(aux, "%s", arguments);
+        aux += val;
     }
     system(buffer);
 }
