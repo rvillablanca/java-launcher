@@ -1,7 +1,7 @@
 # java-launcher
 Simple Python/Bash script for launch java apps on Linux
 
-##Configuration##
+## Configuration
 
 You need set the configuration directly on the script. For purposes of example, the default configuration is:
 
