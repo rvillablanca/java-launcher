@@ -1,5 +1,5 @@
 # java-launcher
-Simple Python/Bash script for launch java apps on Linux
+Simple Python/Bash script and C program for launch java apps on Linux
 
 ## Configuration
 
